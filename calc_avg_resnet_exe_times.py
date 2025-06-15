@@ -1,0 +1,44 @@
+import os
+import time
+
+import torch
+from PIL import Image
+from torch.utils import data
+from torch.utils.data import DataLoader, dataloader
+from torchvision import datasets, models, transforms
+from torchvision.models.resnet import resnet18
+
+import ImageNetDataset
+from config import *
+
+# Calculated from code below
+avg_exe_time = {
+    "18": 20.58037423061323,
+    "34": 37.390417977160546,
+    "50": 57.68680600104854,
+    "101": 100.70519381654448,
+    "152": 141.15619695539354,
+}
+
+dataset = ImageNetDataset.ImageNetDataset(data_dir, preprocess)
+dataloader = DataLoader(dataset, batch_size=16, shuffle=False, num_workers=8)
+
+with open("imagenet_classes.txt", "r") as f:
+    categories = [line.strip() for line in f.readlines()]
+
+for layers, model in models_dict.items():
+    total_time = 0.0
+    total_batches = 0
+
+    for batch_index, batch in enumerate(dataloader):
+        batch = batch.to(device)
+
+        start_time = time.perf_counter()
+        with torch.no_grad():
+            output = model(batch)
+        end_time = time.perf_counter()
+        total_time += end_time - start_time
+        total_batches += 1
+
+    avg_exe_time[layers] = (total_time / len(dataset)) * 1000
+print(avg_exe_time)
