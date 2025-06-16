@@ -1,4 +1,3 @@
-import os
 import time
 
 import torch
@@ -11,26 +10,50 @@ from torchvision.models.resnet import resnet18
 import ImageNetDataset
 from config import *
 
+# Calculated from below
+confidence_thresholds = {
+    "18": 0.8422207832336426,
+    "34": 0.8662796020507812,
+    "50": 0.842467725276947,
+    "101": 0.8936317563056946,
+    "152": 0.8771076202392578,
+}
+
+
 dataset = ImageNetDataset.ImageNetDataset(data_dir, preprocess)
 dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0)
 
 with open("imagenet_classes.txt", "r") as f:
     categories = [line.strip() for line in f.readlines()]
 
+target_precision = 0.95
 for layers, model in models_dict.items():
-    num_successes = 0
+    probs: list[tuple] = []
+    num_correct = 0
     for batch_index, batch in enumerate(dataloader):
         batch = batch.to(device)
 
         with torch.no_grad():
             output = model(batch)
 
-        probs = torch.nn.functional.softmax(output[0], dim=0)
+        batch_probs = torch.nn.functional.softmax(output[0], dim=0)
 
-        top_prob, top_catid = torch.topk(probs, 1)
-        print(f"Class {categories[int(top_catid[0].item())]}: {top_prob[0].item():.4f}")
+        top_prob, top_catid = torch.max(batch_probs, dim=0)
 
-        if top_prob[0].item() >= 0.95:
-            num_successes += 1
-        break
-    break
+        is_correct = False
+        if str(top_catid.item()) == dataset.paths[batch_index][1]:
+            is_correct = True
+            num_correct += 1
+        probs.append((float(top_prob.item()), is_correct))
+
+    total = len(probs)
+    probs.sort(key=lambda e: e[0])
+    for i, (prob, is_correct) in enumerate(probs):
+        curr_precision = num_correct / total
+        if curr_precision >= target_precision:
+            confidence_thresholds[layers] = prob
+            break
+        total -= 1
+        if is_correct:
+            num_correct -= 1
+print(confidence_thresholds)
