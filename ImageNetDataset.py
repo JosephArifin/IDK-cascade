@@ -13,7 +13,7 @@ class ImageNetDataset(Dataset):
     def __init__(self, data_dir, transform) -> None:
         self.data_dir = data_dir
         self.transform = transform
-        self.paths = []
+        self.paths: list[str] = []
 
         for c in range(1000):
             class_dir = os.path.join(data_dir, str(c))
@@ -22,8 +22,7 @@ class ImageNetDataset(Dataset):
                 for image_dir in os.listdir(class_dir)
                 if image_dir.endswith(".jpeg")
             ]
-            for i in range(10):
-                self.paths.append(os.path.join(class_dir, image_dirs[i]))
+            self.paths.extend(os.path.join(class_dir, p) for p in image_dirs)
 
     def __len__(self):
         return len(self.paths)

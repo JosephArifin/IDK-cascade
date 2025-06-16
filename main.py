@@ -56,7 +56,6 @@ for i in range(10):
     input_image = Image.open(file_names[i])
 
     input_tensor = preprocess(input_image)
-    input_image = Image.open(file_names[i])
     input_batch = input_tensor.unsqueeze(0).to(device)
     print(f"File name(Debugging): {file_names[i]}")
     m = 0
