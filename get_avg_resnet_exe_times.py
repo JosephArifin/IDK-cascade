@@ -21,7 +21,7 @@ avg_exe_time = {
 }
 
 dataset = ImageNetDataset.ImageNetDataset(data_dir, preprocess)
-dataloader = DataLoader(dataset, batch_size=16, shuffle=False, num_workers=4)
+dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0)
 
 with open("imagenet_classes.txt", "r") as f:
     categories = [line.strip() for line in f.readlines()]
