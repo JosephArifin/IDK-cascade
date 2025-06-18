@@ -1,12 +1,5 @@
-import os
-import time
-
 import torch
-from PIL import Image
-from torch.utils import data
-from torch.utils.data import DataLoader, dataloader
-from torchvision import datasets, models, transforms
-from torchvision.models.resnet import resnet18
+from torchvision import models, transforms
 
 data_dir = "./data/imagenetv2-top-images-format-val/"
 device = "cuda" if torch.cuda.is_available() else "cpu"
