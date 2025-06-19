@@ -1,5 +1,6 @@
 import os
 import time
+from decimal import Decimal
 
 import torch
 from PIL import Image
@@ -65,14 +66,14 @@ for row, stats in table_probs.table.items():
 # calculate prob-a
 for row, stats in table_probs.table.items():
     indexes: list[int] = []
-    prob_a = 0.0
+    prob_a = Decimal(0.0)
     for i in range(len(row)):
         if row[i] == 1:
             indexes.append(i)
     for r, s in table_probs.table.items():
         for i in indexes:
             if r[i] == 1:
-                prob_a += s["prob_s"]
+                prob_a += Decimal(s["prob_s"])
                 break
-    stats["prob_a"] = prob_a
+    stats["prob_a"] = float(prob_a)
 print(table_probs.table)
