@@ -16,3 +16,4 @@ for i, vertex_layer in enumerate(dag.graph):
     print(f"Vertex Layer: {i}")
     for vert in vertex_layer:
         print(f"Cascade: { vert.cascade }")
+print(f"Dist: {dag.dist}")

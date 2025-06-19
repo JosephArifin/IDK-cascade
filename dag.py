@@ -1,3 +1,4 @@
+from collections import deque
 from typing import Any
 
 
@@ -19,6 +20,10 @@ class DAG:
         # dict[tuple[row], float[prob_a]]
         self.table = table
 
+        # dict[tuple[row], float[cost to get there from start node]]
+        self.dist: dict[tuple[str], float] = {tuple(self.start_vertex.cascade): 0.0}
+        self.construct_graph()
+
     def construct_graph(self):
         for curr_layer in self.graph:
             next_layer: dict[tuple[str], Vertex] = {}
@@ -34,15 +39,15 @@ class DAG:
 
             self.graph.append(list(next_layer.values()))
 
-    def get_vertex_children(self, curr_vertex, layer) -> None:
-        for layers, _ in self.models.items():
-            if layers not in curr_vertex.cascade:
-                new_cascade = curr_vertex.cascade + [layers]
+    def get_vertex_children(self, curr_vertex, next_layer) -> None:
+        for num_layers, _ in self.models.items():
+            if num_layers not in curr_vertex.cascade:
+                new_cascade = curr_vertex.cascade + [num_layers]
                 new_cascade.sort(key=lambda e: int(e))
-                if tuple(new_cascade) in layer.keys():
+                if tuple(new_cascade) in next_layer:
                     curr_vertex.edges.append(
                         Edge(
-                            layer[tuple(new_cascade)],
+                            next_layer[tuple(new_cascade)],
                             self.calc_moving_cost(curr_vertex.cascade, new_cascade),
                         )
                     )
@@ -54,7 +59,14 @@ class DAG:
                             self.calc_moving_cost(curr_vertex.cascade, new_cascade),
                         )
                     )
-                    layer[tuple(new_cascade)] = next_vertex
+                    next_layer[tuple(new_cascade)] = next_vertex
+                    self.dist[tuple(new_cascade)] = float("inf")
+
+                # Get min distance from start node
+                self.dist[tuple(new_cascade)] = min(
+                    self.dist[tuple(new_cascade)],
+                    self.dist[tuple(curr_vertex.cascade)] + curr_vertex.edges[-1].cost,
+                )
 
     def calc_moving_cost(self, prev, next) -> float:
         row = [0] * self.num_models
