@@ -1,4 +1,7 @@
 # Calculated from get_avg_resnet_exe_times
+
+# WARN: THESE VALUES ARE NOT UPDATED, THEY ARE FROM IMAGENETV2
+
 avg_exe_time = {
     "18": 26.23242682698583,
     "34": 71.03540536481233,
