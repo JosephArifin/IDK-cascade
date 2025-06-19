@@ -10,9 +10,6 @@ from config import *
 from dag import *
 from precalculations import *
 
-with open("imagenet_classes.txt", "r") as f:
-    categories = [line.strip() for line in f.readlines()]
-
 start_vertex = Vertex([])
 dag = DAG(start_vertex, models_dict, avg_exe_time, confidence_thresholds, table_prob_a)
 for i, vertex_layer in enumerate(dag.graph):

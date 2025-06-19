@@ -6,8 +6,8 @@ from torch.utils.data import Dataset
 
 class ImageNetDataset(Dataset):
     """
-    Image Net Dataset V2
-    10000 total images
+    Image Net Dataset
+    50000 total images
     """
 
     def __init__(self, data_dir, transform) -> None:
@@ -16,10 +16,11 @@ class ImageNetDataset(Dataset):
         self.paths: list[tuple] = []
 
         for c in range(1000):
-            class_dir = os.path.join(data_dir, str(c))
+            class_ = "00" + "0" * (3 - len(str(c))) + str(c)
+            class_dir = os.path.join(data_dir, class_)
             for p in os.listdir(class_dir):
-                if p.endswith(".jpeg"):
-                    self.paths.append((os.path.join(class_dir, p), str(c)))
+                if p.endswith(".jpg"):
+                    self.paths.append((os.path.join(class_dir, p), class_))
 
     def __len__(self):
         return len(self.paths)

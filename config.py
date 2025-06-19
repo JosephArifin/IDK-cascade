@@ -1,7 +1,7 @@
 import torch
 from torchvision import models, transforms
 
-data_dir = "./data/imagenetv2-top-images-format-val/"
+data_dir = "./data/imagenet/"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
@@ -36,8 +36,8 @@ resnet_152 = resnet_152.to(device)
 
 models_dict = {
     "18": resnet_18,
-    "34": resnet_34,
-    "50": resnet_50,
-    "101": resnet_101,
-    "152": resnet_152,
+    # "34": resnet_34,
+    # "50": resnet_50,
+    # "101": resnet_101,
+    # "152": resnet_152,
 }

@@ -19,6 +19,7 @@ class DAG:
         # dict[tuple[row], float[prob_a]]
         self.table = table
 
+    def construct_graph(self):
         for curr_layer in self.graph:
             next_layer: dict[tuple[str], Vertex] = {}
 

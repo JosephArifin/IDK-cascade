@@ -8,8 +8,8 @@ from torch.utils.data import DataLoader, dataloader
 from torchvision import datasets, models, transforms
 from torchvision.models.resnet import resnet18
 
-import ImageNetDataset
 from config import *
+from ImageNetDataset import ImageNetDataset
 from precalculations import confidence_thresholds
 
 
@@ -39,11 +39,8 @@ class TableProb:
         return tuple(reversed(next_row))
 
 
-dataset = ImageNetDataset.ImageNetDataset(data_dir, preprocess)
+dataset = ImageNetDataset(data_dir, preprocess)
 dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0)
-
-with open("imagenet_classes.txt", "r") as f:
-    categories = [line.strip() for line in f.readlines()]
 
 table_probs = TableProb(len(models_dict))
 for batch_index, batch in enumerate(dataloader):
