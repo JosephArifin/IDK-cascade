@@ -50,7 +50,10 @@ for layers, model in models_dict.items():
         top_prob, top_catid = torch.max(batch_probs, dim=0)
 
         is_correct = False
-        if str(top_catid.item()) == dataset.paths[batch_index][1]:
+        if (
+            "00" + "0" * (3 - len(str(top_catid.item()))) + str(top_catid.item())
+            == dataset.paths[batch_index][1]
+        ):
             is_correct = True
             num_correct += 1
         probs.append((float(top_prob.item()), is_correct))
